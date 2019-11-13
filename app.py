@@ -26,9 +26,10 @@ def insult():
 
 @app.route("/news")
 def news():
+    subject = 'impeachment'
     newsapikey = os.environ['NEWSAPIKEY']
     url = ('https://newsapi.org/v2/top-headlines?'
-       #'q=Trump&'
+       'q=' + subject + '&'
        'country=us&'
        'language=en&'
        'apiKey=' + newsapikey)
@@ -112,9 +113,7 @@ def sample_analyze_entity_sentiment(text_content):
 
         for mention in entity.mentions:
             print(u"Mention text: {}".format(mention.text.content))
-            print(
-                u"Mention type: {}".format(enums.EntityMention.Type(mention.type).name)
-            )
+            print(u"Mention type: {}\n".format(enums.EntityMention.Type(mention.type).name))
 
     print(u"Language of the text: {}".format(response.language))
 
