@@ -1,4 +1,4 @@
-# Try Out Development Containers: Python
+# News Sentiment Analyzer
 
 This is a project based on **[VS Code Remote - Containers](https://aka.ms/vscode-remote/containers)** 
 
