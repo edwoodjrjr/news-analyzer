@@ -49,8 +49,10 @@ def news():
 
     print('News: ' + new_str)
     print('Number of Google Natural Language units used: ' + str(math.ceil(new_str_len/800)))
-    return new_str
+
+    #return new_str
     #return sample_analyze_sentiment(new_str)
+    return sample_analyze_entity_sentiment(new_str)
 
 def sample_analyze_sentiment(text_content):
     """
@@ -61,14 +63,10 @@ def sample_analyze_sentiment(text_content):
     """
 
     client = language_v1.LanguageServiceClient()
-
     type_ = enums.Document.Type.PLAIN_TEXT
-
     language = "en"
     document = {"content": text_content, "type": type_, "language": language}
-
     encoding_type = enums.EncodingType.UTF8
-
     response = client.analyze_sentiment(document, encoding_type=encoding_type)
 
     print(u"Response text: {}".format(text_content))
@@ -82,6 +80,43 @@ def sample_analyze_sentiment(text_content):
 
     print(u"Language of the text: {}".format(response.language))
 
-    response_json = {"text": text_content, "sentiment_score": response.document_sentiment.score, "sentiment_magnitude": response.document_sentiment.magnitude, "language": language}
+    response_json = {"type": "sentiment analysis", "text": text_content, "sentiment_score": response.document_sentiment.score, "sentiment_magnitude": response.document_sentiment.magnitude, "language": language}
+    return json.dumps(response_json, sort_keys=False)
 
+def sample_analyze_entity_sentiment(text_content):
+    """
+    Analyzing Entity Sentiment in a String
+
+    Args:
+      text_content The text content to analyze
+    """
+
+    client = language_v1.LanguageServiceClient()
+    type_ = enums.Document.Type.PLAIN_TEXT
+    language = "en"
+    document = {"content": text_content, "type": type_, "language": language}
+    encoding_type = enums.EncodingType.UTF8
+    response = client.analyze_entity_sentiment(document, encoding_type=encoding_type)
+
+    for entity in response.entities:
+        print(u"Representative name for the entity: {}".format(entity.name))
+        print(u"Entity type: {}".format(enums.Entity.Type(entity.type).name))
+        print(u"Salience score: {}".format(entity.salience))
+
+        sentiment = entity.sentiment
+        print(u"Entity sentiment score: {}".format(sentiment.score))
+        print(u"Entity sentiment magnitude: {}".format(sentiment.magnitude))
+
+        for metadata_name, metadata_value in entity.metadata.items():
+            print(u"{} = {}".format(metadata_name, metadata_value))
+
+        for mention in entity.mentions:
+            print(u"Mention text: {}".format(mention.text.content))
+            print(
+                u"Mention type: {}".format(enums.EntityMention.Type(mention.type).name)
+            )
+
+    print(u"Language of the text: {}".format(response.language))
+
+    response_json = {"type": "entity sentiment analysis", "language": language}
     return json.dumps(response_json, sort_keys=False)

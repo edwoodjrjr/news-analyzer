@@ -8,6 +8,6 @@ Requirements:
 - VSCode with the Remote Containers extension
 - environment.env and gcloudkey.json files in the root folder.
     - environment.env contents:
-        - GOOGLE_APPLICATION_CREDENTIALS=gcloudkey.json
-        - NEWSAPIKEY='apiKey from newsapi.org'
-    - gcloudkey.json contents: A private key in JSON format for a Google cloud service account that has access to a project where the Google Natural Language API is enabled
+        - GOOGLE_APPLICATION_CREDENTIALS=gcloudkey.json 
+        - NEWSAPIKEY='apiKey from newsapi.org' (see https://newsapi.org/docs/get-started)
+    - gcloudkey.json contents: A private key in JSON format for a Google cloud service account that has access to a project where the Google Natural Language API is enabled (see https://cloud.google.com/natural-language/docs/quickstart-client-libraries for info on setting up a project and service account)
