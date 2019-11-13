@@ -332,4 +332,4 @@ ASALocalRun/
 *.DS_Store
 
 gcloudkey.json
-.env
+*.env

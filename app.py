@@ -3,12 +3,10 @@
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 #-----------------------------------------------------------------------------------------
 
-# get news api key from env var
 # add web form to take input for news source, subject
-# move to new project and push to github
 
+import os
 import json
-import pprint
 import requests
 import math
 
@@ -24,17 +22,16 @@ def insult():
     url = 'https://evilinsult.com/generate_insult.php?lang=en&type=json'
     r = requests.get(url)
     j = r.json()
-    #pprint.pprint(j)
-    #return j["insult"]
     return sample_analyze_sentiment(j["insult"])
 
 @app.route("/news")
 def news():
+    newsapikey = os.environ['NEWSAPIKEY']
     url = ('https://newsapi.org/v2/top-headlines?'
        #'q=Trump&'
        'country=us&'
        'language=en&'
-       'apiKey=189489ba7f074c52b390066575539c68')
+       'apiKey=' + newsapikey)
     r = requests.get(url)
     j = r.json()
     new_str = ''

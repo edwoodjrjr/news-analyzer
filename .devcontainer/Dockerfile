@@ -7,7 +7,6 @@ FROM python:3.7.5-buster
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
-ENV GOOGLE_APPLICATION_CREDENTIALS=gcloudkey.json
 
 # Or your actual UID, GID on Linux if not the default 1000
 ARG USERNAME=vscode
