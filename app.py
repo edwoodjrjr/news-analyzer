@@ -10,7 +10,7 @@ import json
 import requests
 import math
 
-from flask import Flask
+from flask import Flask, render_template
 app = Flask(__name__)
 
 from google.cloud import language_v1
@@ -18,11 +18,18 @@ from google.cloud.language_v1 import enums
 
 @app.route("/insult")
 def insult():
-    #return app.send_static_file("index.html")
     url = 'https://evilinsult.com/generate_insult.php?lang=en&type=json'
     r = requests.get(url)
     j = r.json()
-    return sample_analyze_sentiment(j["insult"])
+    
+    sentiment_str = sample_analyze_sentiment(j["insult"])
+    sentiment_json = json.loads(sentiment_str)
+
+    burn = sentiment_json["text"]
+    score = sentiment_json["sentiment_score"]
+    magnitude = sentiment_json["sentiment_magnitude"]
+
+    return render_template('insult.html', text=burn, score=score, magnitude=magnitude)
 
 @app.route("/news")
 def news():
