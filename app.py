@@ -2,7 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 #-----------------------------------------------------------------------------------------
 
-# add web form to take input for news source, subject
 # add timer to prevent too many requests
 # add CSS
 
@@ -11,7 +10,7 @@ import json
 import requests
 import math
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 app = Flask(__name__)
 
 from google.cloud import language_v1
@@ -34,7 +33,7 @@ def insult():
 
 @app.route("/news")
 def news():
-    subject = 'impeachment'
+    subject = request.args.get('subject', default = '', type = str)
     newsapikey = os.environ['NEWSAPIKEY']
     url = ('https://newsapi.org/v2/top-headlines?'
        'q=' + subject + '&'
@@ -62,7 +61,10 @@ def news():
     document_sentiment_data = analyze_sentiment(new_str)
     entity_sentiment_data = analyze_entity_sentiment(new_str)
 
-    html = render_template('news.html', subject=document_sentiment_data[0]['subject'], score=document_sentiment_data[0]['sentiment'], magnitude=document_sentiment_data[0]['magnitude'], entities=entity_sentiment_data)
+    if subject == '':
+        subject = 'everything'
+
+    html = render_template('news.html', subject=subject, score=document_sentiment_data[0]['sentiment'], magnitude=document_sentiment_data[0]['magnitude'], entities=entity_sentiment_data)
     
     return html
 
@@ -79,17 +81,6 @@ def analyze_insult(text_content):
     document = {"content": text_content, "type": type_, "language": language}
     encoding_type = enums.EncodingType.UTF8
     response = client.analyze_sentiment(document, encoding_type=encoding_type)
-
-    print(u"Response text: {}".format(text_content))
-    print(u"Document sentiment score: {}".format(response.document_sentiment.score))
-    print(u"Document sentiment magnitude: {}".format(response.document_sentiment.magnitude))
-
-    # for sentence in response.sentences:
-    #     print(u"Sentence text: {}".format(sentence.text.content))
-    #     print(u"Sentence sentiment score: {}".format(sentence.sentiment.score))
-    #     print(u"Sentence sentiment magnitude: {}".format(sentence.sentiment.magnitude))
-
-    print(u"Language of the text: {}".format(response.language))
 
     response_json = {"type": "sentiment analysis", "text": text_content, "sentiment_score": response.document_sentiment.score, "sentiment_magnitude": response.document_sentiment.magnitude, "language": language}
     return json.dumps(response_json, sort_keys=False)
@@ -110,7 +101,7 @@ def analyze_sentiment(text_content):
     encoding_type = enums.EncodingType.UTF8
     response = client.analyze_sentiment(document, encoding_type=encoding_type)
 
-    data = [{'subject': 'impeachment', 'sentiment': response.document_sentiment.score,'magnitude': response.document_sentiment.magnitude, 'language': response.language}]
+    data = [{'sentiment': response.document_sentiment.score,'magnitude': response.document_sentiment.magnitude, 'language': response.language}]
 
     return data
 
