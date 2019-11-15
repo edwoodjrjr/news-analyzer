@@ -5,19 +5,17 @@
     <body>
         <div>
             <h1>Sentiment Analysis for news about {{ subject }}</h1>
-            <p>All headlines: {{ text }}</p>
-            <p>Sentiment score: {{ score }}</p>
-            <p>Sentiment magnitude: {{ magnitude }}</p>
+            <p>Document sentiment score: {{ score }}</p>
+            <p>Document sentiment magnitude: {{ magnitude }}</p>
         </div>
         <div>
             <h1>Entity Sentiment Analysis for news about {{ subject }}</h1>
             {% for entity in entities %}
                 <div>
-                    <p>Entity: {{ entity }}</p>
-                    <p>Type: {{ entity_type }}</p>
-                    <p>Sentiment score: {{ entity_score }}</p>
-                    <p>Sentiment magnitude: {{ entity_magnitude }}</p>
-                    <p>Salience score: {{ entity_salience }}</p>
+                    <h2>Entity name: {{ entity.entity_name }}</h2>
+                    <p>Sentiment score: {{ entity.entity_score }}</p>
+                    <p>Sentiment magnitude: {{ entity.entity_magnitude }}</p>
+                    <p>Salience score: {{ entity.entity_salience }}</p>
                 </div>
             {% endfor %}
         </div>

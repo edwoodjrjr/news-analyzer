@@ -3,6 +3,8 @@
 #-----------------------------------------------------------------------------------------
 
 # add web form to take input for news source, subject
+# add timer to prevent too many requests
+# add CSS
 
 import os
 import json
@@ -21,7 +23,7 @@ def insult():
     r = requests.get(url)
     j = r.json()
     
-    sentiment_str = sample_analyze_sentiment(j["insult"])
+    sentiment_str = analyze_insult(j["insult"])
     sentiment_json = json.loads(sentiment_str)
 
     burn = sentiment_json["text"]
@@ -55,16 +57,18 @@ def news():
     new_str_len = len(new_str)
 
     print('News: ' + new_str)
-    print('Number of Google Natural Language units used: ' + str(math.ceil(new_str_len/800)))
+    print('Number of Google Natural Language units used: ' + str(math.ceil((new_str_len/1000)*2)))
 
-    #return new_str
-    #return sample_analyze_sentiment(new_str)
-    return sample_analyze_entity_sentiment(new_str)
+    document_sentiment_data = analyze_sentiment(new_str)
+    entity_sentiment_data = analyze_entity_sentiment(new_str)
 
-def sample_analyze_sentiment(text_content):
+    html = render_template('news.html', subject=document_sentiment_data[0]['subject'], score=document_sentiment_data[0]['sentiment'], magnitude=document_sentiment_data[0]['magnitude'], entities=entity_sentiment_data)
+    
+    return html
+
+def analyze_insult(text_content):
     """
     Analyzing Sentiment in a String
-
     Args:
       text_content The text content to analyze
     """
@@ -90,7 +94,27 @@ def sample_analyze_sentiment(text_content):
     response_json = {"type": "sentiment analysis", "text": text_content, "sentiment_score": response.document_sentiment.score, "sentiment_magnitude": response.document_sentiment.magnitude, "language": language}
     return json.dumps(response_json, sort_keys=False)
 
-def sample_analyze_entity_sentiment(text_content):
+def analyze_sentiment(text_content):
+    """
+    Analyzing Sentiment in a String
+
+    Args:
+      text_content The text content to analyze
+
+    """
+
+    client = language_v1.LanguageServiceClient()
+    type_ = enums.Document.Type.PLAIN_TEXT
+    language = "en"
+    document = {"content": text_content, "type": type_, "language": language}
+    encoding_type = enums.EncodingType.UTF8
+    response = client.analyze_sentiment(document, encoding_type=encoding_type)
+
+    data = [{'subject': 'impeachment', 'sentiment': response.document_sentiment.score,'magnitude': response.document_sentiment.magnitude, 'language': response.language}]
+
+    return data
+
+def analyze_entity_sentiment(text_content):
     """
     Analyzing Entity Sentiment in a String
 
@@ -104,24 +128,10 @@ def sample_analyze_entity_sentiment(text_content):
     document = {"content": text_content, "type": type_, "language": language}
     encoding_type = enums.EncodingType.UTF8
     response = client.analyze_entity_sentiment(document, encoding_type=encoding_type)
+    data = []
 
     for entity in response.entities:
-        print(u"Representative name for the entity: {}".format(entity.name))
-        print(u"Entity type: {}".format(enums.Entity.Type(entity.type).name))
-        print(u"Salience score: {}".format(entity.salience))
-
         sentiment = entity.sentiment
-        print(u"Entity sentiment score: {}".format(sentiment.score))
-        print(u"Entity sentiment magnitude: {}".format(sentiment.magnitude))
-
-        for metadata_name, metadata_value in entity.metadata.items():
-            print(u"{} = {}".format(metadata_name, metadata_value))
-
-        for mention in entity.mentions:
-            print(u"Mention text: {}".format(mention.text.content))
-            print(u"Mention type: {}\n".format(enums.EntityMention.Type(mention.type).name))
-
-    print(u"Language of the text: {}".format(response.language))
-
-    response_json = {"type": "entity sentiment analysis", "language": language}
-    return json.dumps(response_json, sort_keys=False)
+        data.append({'entity_name': entity.name, 'entity_score': sentiment.score, 'entity_magnitude': sentiment.magnitude, 'entity_salience': entity.salience})
+ 
+    return data
