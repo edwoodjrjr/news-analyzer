@@ -1,11 +1,25 @@
 <html>
     <head>
-        <title>Insult Generator</title>
+        <link rel="stylesheet" href="https://www.w3.org/StyleSheets/Core/Chocolate" type="text/css">
+        <title>Insult Sentiment Analyzer</title>
     </head>
     <body>
-        <h1>Hit me!</h1>
-        <p>Insult: {{ text }}</p>
-        <p>Sentiment score: {{ score }}</p>
-        <p>Sentiment magnitude: {{ magnitude }}</p>
+        <div>
+            <h1>Sentiment Analysis for Insult: {{ text }}</h1>
+            <p>Document sentiment score: {{ score }}</p>
+            <p>Document sentiment magnitude: {{ magnitude }}</p>
+            <p>Natural Language API units used by this call: {{ usage }}</p>
+        </div>
+        <div>
+            <h1>Entity Sentiment Analysis</h1>
+            {% for entity in entities %}
+                <div>
+                    <h2>Entity name: {{ entity.entity_name }}</h2>
+                    <p>Sentiment score: {{ entity.entity_score }}</p>
+                    <p>Sentiment magnitude: {{ entity.entity_magnitude }}</p>
+                    <p>Salience score: {{ entity.entity_salience }}</p>
+                </div>
+            {% endfor %}
+        </div>
     </body>
 </html>

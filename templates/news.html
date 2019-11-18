@@ -1,5 +1,6 @@
 <html>
     <head>
+        <link rel="stylesheet" href="https://www.w3.org/StyleSheets/Core/Chocolate" type="text/css">
         <title>News Sentiment Analyzer</title>
     </head>
     <body>
@@ -7,6 +8,7 @@
             <h1>Sentiment Analysis for news about {{ subject }}</h1>
             <p>Document sentiment score: {{ score }}</p>
             <p>Document sentiment magnitude: {{ magnitude }}</p>
+            <p>Natural Language API units used by this call: {{ usage }}</p>
         </div>
         <div>
             <h1>Entity Sentiment Analysis for news about {{ subject }}</h1>
