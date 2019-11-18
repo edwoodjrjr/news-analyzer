@@ -1,3 +1,4 @@
 flask
+flask-limiter
 requests
 google-cloud-language

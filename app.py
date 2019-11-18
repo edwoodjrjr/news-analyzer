@@ -8,7 +8,15 @@ import requests
 import math
 
 from flask import Flask, render_template, request
+from flask import Flask
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 app = Flask(__name__)
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["2 per minute", "1 per second"],
+)
 
 from google.cloud import language_v1
 from google.cloud.language_v1 import enums
@@ -19,6 +27,7 @@ language = "en"
 encoding_type = enums.EncodingType.UTF8
 
 @app.route("/insult")
+@limiter.limit("2 per minute")
 def insult():
     url = 'https://evilinsult.com/generate_insult.php?lang=en&type=json'
     r = requests.get(url)
@@ -45,6 +54,7 @@ def insult():
     return html
 
 @app.route("/news")
+@limiter.limit("1 per minute")
 def news():
     subject = request.args.get('subject', default = '', type = str)
     news_api_key = os.environ['NEWSAPIKEY']
