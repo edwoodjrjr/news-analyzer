@@ -2,9 +2,6 @@
 # Licensed under the MIT License. See LICENSE in the project root for license information.
 #-----------------------------------------------------------------------------------------
 
-# add timer to prevent too many requests
-# add CSS
-
 import os
 import json
 import requests
@@ -15,6 +12,11 @@ app = Flask(__name__)
 
 from google.cloud import language_v1
 from google.cloud.language_v1 import enums
+
+client = language_v1.LanguageServiceClient()
+type_ = enums.Document.Type.PLAIN_TEXT
+language = "en"
+encoding_type = enums.EncodingType.UTF8
 
 @app.route("/insult")
 def insult():
@@ -80,26 +82,9 @@ def news():
     if subject == '':
         subject = 'everything'
 
-    html = render_template('news.html', subject=subject, score=doc_data.document_sentiment.score, magnitude=doc_data.document_sentiment.magnitude, entities=entity_data, usage=units)
+    html = render_template('news.html', subject=subject, text=news_str, score=doc_data.document_sentiment.score, magnitude=doc_data.document_sentiment.magnitude, entities=entity_data, usage=units)
     
     return html
-
-def analyze_insult(text_content):
-    """
-    Analyzing Sentiment in a String
-    Args:
-      text_content The text content to analyze
-    """
-
-    client = language_v1.LanguageServiceClient()
-    type_ = enums.Document.Type.PLAIN_TEXT
-    language = "en"
-    document = {"content": text_content, "type": type_, "language": language}
-    encoding_type = enums.EncodingType.UTF8
-    response = client.analyze_sentiment(document, encoding_type=encoding_type)
-
-    response_json = {"type": "sentiment analysis", "text": text_content, "sentiment_score": response.document_sentiment.score, "sentiment_magnitude": response.document_sentiment.magnitude, "language": language}
-    return json.dumps(response_json, sort_keys=False)
 
 def analyze_sentiment(text_content):
     """
@@ -110,11 +95,7 @@ def analyze_sentiment(text_content):
 
     """
 
-    client = language_v1.LanguageServiceClient()
-    type_ = enums.Document.Type.PLAIN_TEXT
-    language = "en"
     document = {"content": text_content, "type": type_, "language": language}
-    encoding_type = enums.EncodingType.UTF8
     response = client.analyze_sentiment(document, encoding_type=encoding_type)
 
     return response
@@ -127,11 +108,7 @@ def analyze_entity_sentiment(text_content):
       text_content The text content to analyze
     """
 
-    client = language_v1.LanguageServiceClient()
-    type_ = enums.Document.Type.PLAIN_TEXT
-    language = "en"
     document = {"content": text_content, "type": type_, "language": language}
-    encoding_type = enums.EncodingType.UTF8
     response = client.analyze_entity_sentiment(document, encoding_type=encoding_type)
  
     return response

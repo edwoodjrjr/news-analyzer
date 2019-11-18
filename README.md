@@ -2,7 +2,7 @@
 
 This is a project based on **[VS Code Remote - Containers](https://aka.ms/vscode-remote/containers)** 
 
-This will grab the top headlines from a news API and run them through the Google Natural Language API sentiment analyzer.
+This will grab the top headlines from a news API and run them through the Google Natural Language API sentiment analyzer.  You can use this information to decide if you want to get up, or stay in bed.
 
 Requirements: 
 - Microsoft Visual Studio Code with the Remote Containers extension installed.

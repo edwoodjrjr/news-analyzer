@@ -5,13 +5,14 @@
     </head>
     <body>
         <div>
-            <h1>Sentiment Analysis for Insult: {{ text }}</h1>
+            <h1>Sentiment Analysis for Insult:</h1>
+            <h2>{{ text }}</h2>
             <p>Document sentiment score: {{ score }}</p>
             <p>Document sentiment magnitude: {{ magnitude }}</p>
             <p>Natural Language API units used by this call: {{ usage }}</p>
         </div>
         <div>
-            <h1>Entity Sentiment Analysis</h1>
+            <h1>Insult Entity Analysis</h1>
             {% for entity in entities %}
                 <div>
                     <h2>Entity name: {{ entity.entity_name }}</h2>
