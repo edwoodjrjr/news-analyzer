@@ -11,3 +11,7 @@ Requirements:
         - GOOGLE_APPLICATION_CREDENTIALS=gcloudkey.json 
         - NEWSAPIKEY='apiKey from newsapi.org' (see https://newsapi.org/docs/get-started for info on how to get an API key)
     - gcloudkey.json contents: A private key in JSON format for a Google cloud service account that has access to a project where the Google Natural Language API is enabled (see https://cloud.google.com/natural-language/docs/quickstart-client-libraries for info on setting up a project and service account)
+
+Example command to run the server from a Python virtualenv (aka without VSCode's help):
+- export FLASK_APP=app.py FLASK_ENV=development FLASK_DEBUG=0 GOOGLE_APPLICATION_CREDENTIALS=gcloudkey.json NEWSAPIKEY=<your newsapi.org API key>
+- flask run --host 0.0.0.0 --port 9000 &
